@@ -1,0 +1,10 @@
+{
+  "name": "우리집 재고",
+  "short_name": "우리집 재고",
+  "start_url": "./home-stock.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f5f1",
+  "theme_color": "#f6f5f1",
+  "icons": [{ "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }]
+}
