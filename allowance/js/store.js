@@ -147,9 +147,9 @@ export async function getPin() {
   return snap.exists() ? snap.data() : null;
 }
 
-export async function setPin({ salt, hash }) {
+export async function setPin({ salt, hash, length }) {
   requireParent();
-  await withTimeout(setDoc(doc(db, 'settings', 'pin'), { salt, hash }));
+  await withTimeout(setDoc(doc(db, 'settings', 'pin'), { salt, hash, length }));
 }
 
 export async function createChildren(names) {

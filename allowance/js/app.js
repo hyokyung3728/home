@@ -1,6 +1,6 @@
 import { LIMITS, computeAvailable, validateTransaction, validateCancel } from './logic.js';
 import { createIdleLock } from './idle.js';
-import { hashPin, newSalt, verifyPin, isValidPinFormat } from './pin.js';
+import { PIN_LENGTH, hashPin, newSalt, verifyPin, isValidPinFormat } from './pin.js';
 import { formatWon } from './format.js';
 import { el } from './dom.js';
 import * as childUi from './ui-child.js';
@@ -148,12 +148,12 @@ function showLoginGate(message) {
   );
 }
 
-function pinInput(label) {
+function pinInput(label, length) {
   return el('input', {
     class: 'text',
     type: 'password',
     inputmode: 'numeric',
-    maxlength: '4',
+    maxlength: String(length),
     autocomplete: 'off',
     'aria-label': label,
     placeholder: label,
@@ -172,7 +172,8 @@ async function startPinFlow() {
 }
 
 function showPinGate(stored) {
-  const input = pinInput('PIN 4자리');
+  const length = stored.length ?? 4;
+  const input = pinInput(`PIN ${length}자리`, length);
   const error = el('div', { class: 'error' });
   const submit = async () => {
     if (await verifyPin(input.value, stored)) {
@@ -194,18 +195,18 @@ function showPinGate(stored) {
 }
 
 function showSetPinGate() {
-  const first = pinInput('새 PIN 4자리');
-  const second = pinInput('PIN 한 번 더');
+  const first = pinInput(`새 PIN ${PIN_LENGTH}자리`, PIN_LENGTH);
+  const second = pinInput('PIN 한 번 더', PIN_LENGTH);
   const error = el('div', { class: 'error' });
   const submit = async () => {
     if (!isValidPinFormat(first.value)) {
-      error.textContent = 'PIN은 숫자 4자리로 정해 주세요.';
+      error.textContent = `PIN은 숫자 ${PIN_LENGTH}자리로 정해 주세요.`;
     } else if (first.value !== second.value) {
       error.textContent = '두 PIN이 서로 달라요.';
     } else {
       const salt = newSalt();
       try {
-        await store.setPin({ salt, hash: await hashPin(first.value, salt) });
+        await store.setPin({ salt, hash: await hashPin(first.value, salt), length: PIN_LENGTH });
       } catch {
         error.textContent = SAVE_FAILED;
         return;
@@ -216,7 +217,7 @@ function showSetPinGate() {
   };
   openGate(
     el('h2', { text: 'PIN을 정해 주세요' }),
-    el('p', { text: '부모 모드를 열 때 쓰는 숫자 4자리예요. 두 분이 같은 PIN을 함께 써요.' }),
+    el('p', { text: `부모 모드를 열 때 쓰는 숫자 ${PIN_LENGTH}자리예요. 두 분이 같은 PIN을 함께 써요.` }),
     first,
     second,
     error,
