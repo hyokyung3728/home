@@ -227,6 +227,8 @@ input.amount-input { font-size: 1.4em; font-weight: 700; }
   border-radius: 10px;
   background: #fff;
 }
+.dialog .row button { white-space: nowrap; }
+.dialog .row button:not(.primary) { flex: 0 0 auto; padding-inline: 18px; }
 .dialog button.primary { border: 0; background: #1f4e8c; color: #fff; }
 .dialog input.text { border-color: #d5dbe3; letter-spacing: 0.4em; text-align: center; }
 
